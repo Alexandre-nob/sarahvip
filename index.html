@@ -30,7 +30,6 @@
       z-index:-10;
       width:100%;
       height:100%;
-      /* MANTENDO SEU LINK S3 DO HTML 1 */
       background-image: url('https://s3.canalwpp.com/sarah/fundoperfil.jpeg');
       background-size:cover;
       background-position:center;
@@ -65,7 +64,7 @@
       border: 1px solid rgba(255,255,255,0.2);
       font-weight: 600;
       transition: all 0.2s;
-      text-align: center; /* Centralizei para ficar igual botões de Sim/Não */
+      text-align: center;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -73,7 +72,6 @@
     }
     .btn-quiz:active { transform: scale(0.98); background: rgba(255,255,255,0.2); }
     
-    /* Estilo para botão de destaque */
     .btn-primary {
       background: linear-gradient(90deg, #ec4899, #f97316); 
       border: none;
@@ -99,7 +97,7 @@
       t.src=v; s=b.getElementsByTagName(e)[0];
       s.parentNode.insertBefore(t,s)}(window, document,'script',
       'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '1673968253270388');
+    fbq('init', '1219620626848870');
     fbq('track', 'PageView');
   </script>
 </head>
@@ -156,7 +154,7 @@
                 <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> Sarah Hadassa
               </div>
               <div id="location-display" class="text-sm font-bold text-white/90">
-                 Calculando distância...
+                  Calculando distância...
               </div>
             </div>
           </div>
@@ -191,36 +189,30 @@
   <script>
     // --- DADOS E LÓGICA ---
     
-    // MENSAGENS ALEATÓRIAS (DO HTML 2)
     const messages = [
         'Oi quero ver seus conteudos', 'Oi gata quero ver seus conteudos',
         'Oi gatinha quero ver seus conteudos', 'Oi anjo quero ver seus conteudos',
-        'Oi Quero ver seus conteudos', 'Oi tudo bem?Quero ver seus conteudos', 'Oi Quero ver seus conteudos',
-        'Oi tudo joia?Quero ver seus conteudos', 'Oi tudo bom?Quero ver seus conteudos', 'Oi quero Quero ver seus conteudos',
-        'Oi Quero ver seus conteudos?', 'Oi Quero ver seus conteudos'
+        'Oi Quero ver seus conteudos', 'Oi tudo bem?Quero ver seus conteudos', 
+        'Oi tudo joia?Quero ver seus conteudos', 'Oi tudo bom?Quero ver seus conteudos'
     ];
     
-    // NÚMERO DO WHATSAPP (DO HTML 1)
-    const whatsappNumber = '556183200152'; 
+    // LISTA DE NÚMEROS PARA RANDOMIZAR (50/50)
+    const whatsappNumbers = ['556183200152', '556181898638']; 
 
     function nextStep(step) {
       document.querySelectorAll('.quiz-step').forEach(el => el.classList.remove('active'));
       document.getElementById('step-' + step).classList.add('active');
       
-      // Zoom effect no background na última etapa
       if(step === 4) {
         document.getElementById('bgImage').classList.add('zoom');
-        generateLocation(); // Gera a localização quando chega na etapa final
+        generateLocation();
       }
     }
 
-    // Lógica de Localização (DO HTML 2)
     function generateLocation() {
         const minKm = 5;
         const maxKm = 31;
         const randomKm = Math.floor(Math.random() * (maxKm - minKm + 1)) + minKm;
-        
-        // Injeta o texto no elemento
         const locDisplay = document.getElementById('location-display');
         locDisplay.innerHTML = `📍 Perto de você! Na sua região, a somente <span class="text-green-400">${randomKm} km</span> disponível para conversar.`;
     }
@@ -230,11 +222,11 @@
       btn.disabled = true;
       btn.textContent = 'Chamando...';
 
-      // Sorteia mensagem (Do HTML 2)
+      // Sorteia o número e a mensagem
+      const randomNumber = whatsappNumbers[Math.floor(Math.random() * whatsappNumbers.length)];
       const randomMessage = messages[Math.floor(Math.random() * messages.length)];
       
-      // Monta URL
-      const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(randomMessage)}`;
+      const waUrl = `https://wa.me/${randomNumber}?text=${encodeURIComponent(randomMessage)}`;
 
       if (typeof fbq === 'function') {
         fbq('track', 'Lead');
@@ -244,11 +236,12 @@
       }
     }
 
-    // QR Code Desktop (Lógica extra)
+    // QR Code Desktop (Também pega um número aleatório ao carregar)
     const qrImg = document.getElementById('qr-img');
     if(qrImg) {
+      const randomNumQR = whatsappNumbers[Math.floor(Math.random() * whatsappNumbers.length)];
       const msgFixa = messages[0];
-      const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msgFixa)}`;
+      const waUrl = `https://wa.me/${randomNumQR}?text=${encodeURIComponent(msgFixa)}`;
       qrImg.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent(waUrl)}&choe=UTF-8`;
     }
   </script>
