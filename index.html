@@ -126,7 +126,8 @@
             <h2 class="text-lg font-bold leading-snug">Sarah está online agora, vamos conversar no WhatsApp?</h2>
           </div>
           <button class="btn-quiz btn-primary" onclick="nextStep(2)">Sim 😈</button>
-          <button class="btn-quiz" onclick="nextStep(2)">Não</button> </div>
+          <button class="btn-quiz" onclick="nextStep(2)">Não</button> 
+        </div>
 
         <div id="step-2" class="quiz-step">
           <div class="mb-6 text-center">
@@ -196,8 +197,8 @@
         'Oi tudo joia?Quero ver seus conteudos', 'Oi tudo bom?Quero ver seus conteudos'
     ];
     
-    // LISTA DE NÚMEROS PARA RANDOMIZAR (50/50)
-    const whatsappNumbers = ['556183200152', '556181898638']; 
+    // Número de emergência caso o n8n fique offline (você nunca perde o lead)
+    const fallbackNumber = '556183200152'; 
 
     function nextStep(step) {
       document.querySelectorAll('.quiz-step').forEach(el => el.classList.remove('active'));
@@ -217,31 +218,51 @@
         locDisplay.innerHTML = `📍 Perto de você! Na sua região, a somente <span class="text-green-400">${randomKm} km</span> disponível para conversar.`;
     }
 
-    function redirectToRandomWhatsapp() {
+    async function redirectToRandomWhatsapp() {
       const btn = document.getElementById('sim-btn');
       btn.disabled = true;
-      btn.textContent = 'Chamando...';
+      btn.textContent = 'Processando...'; // Texto atualizado para dar feedback
 
-      // Sorteia o número e a mensagem
-      const randomNumber = whatsappNumbers[Math.floor(Math.random() * whatsappNumbers.length)];
       const randomMessage = messages[Math.floor(Math.random() * messages.length)];
       
-      const waUrl = `https://wa.me/${randomNumber}?text=${encodeURIComponent(randomMessage)}`;
+      try {
+        // Faz a chamada para a Pressel no n8n (certifique-se que no n8n o path do webhook é pressel-alex)
+        const resp = await fetch('https://n8nwebhook.vpsrmhtzn.uk/webhook/pressel-alex');
+        const data = await resp.json();
+        
+        // Lê o número retornado (pega tanto whatsapp quanto numeroSelecionado para não dar erro)
+        const numero = data.whatsapp || data.numeroSelecionado;
+        
+        if (!numero) throw new Error("n8n não retornou um número válido");
 
-      if (typeof fbq === 'function') {
-        fbq('track', 'Lead');
-        setTimeout(() => { window.location.href = waUrl; }, 400);
-      } else {
-        window.location.href = waUrl;
+        const waUrl = `https://wa.me/${numero}?text=${encodeURIComponent(randomMessage)}`;
+
+        if (typeof fbq === 'function') {
+          fbq('track', 'Lead');
+          setTimeout(() => { window.location.href = waUrl; }, 400);
+        } else {
+          window.location.href = waUrl;
+        }
+      } catch (e) {
+        console.error("Erro na Pressel, caindo para número de segurança:", e);
+        
+        // Se o n8n falhar, envia para o número de segurança
+        const waUrl = `https://wa.me/${fallbackNumber}?text=${encodeURIComponent(randomMessage)}`;
+        
+        if (typeof fbq === 'function') {
+          fbq('track', 'Lead');
+          setTimeout(() => { window.location.href = waUrl; }, 400);
+        } else {
+          window.location.href = waUrl;
+        }
       }
     }
 
-    // QR Code Desktop (Também pega um número aleatório ao carregar)
+    // QR Code Desktop (Mantido com o número de segurança)
     const qrImg = document.getElementById('qr-img');
     if(qrImg) {
-      const randomNumQR = whatsappNumbers[Math.floor(Math.random() * whatsappNumbers.length)];
       const msgFixa = messages[0];
-      const waUrl = `https://wa.me/${randomNumQR}?text=${encodeURIComponent(msgFixa)}`;
+      const waUrl = `https://wa.me/${fallbackNumber}?text=${encodeURIComponent(msgFixa)}`;
       qrImg.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent(waUrl)}&choe=UTF-8`;
     }
   </script>
