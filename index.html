@@ -190,6 +190,9 @@
   <script>
     // --- DADOS E LÓGICA ---
     
+    // NÚMERO DE SEGURANÇA (Se o n8n ou o banco falharem, o lead vai para cá e você não perde a venda)
+    const fallbackNumber = "556183200152"; 
+
     const messages = [
         'Oi quero ver seus conteudos', 'Oi gata quero ver seus conteudos',
         'Oi gatinha quero ver seus conteudos', 'Oi anjo quero ver seus conteudos',
@@ -207,10 +210,11 @@
       }
     }
 
-    // Mantive o QR Code apontando para um link temporário para não quebrar a renderização da tela desktop
+    // Configura o QR Code Desktop apontando para o seu número real de contingência
     const qrImg = document.getElementById('qr-img');
     if(qrImg) {
-      qrImg.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent('https://wa.me/5511999999999')}&choe=UTF-8`;
+      const msgFixa = messages[0];
+      qrImg.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent('https://wa.me/' + fallbackNumber + '?text=' + msgFixa)}&choe=UTF-8`;
     }
 
     function generateLocation() {
@@ -229,7 +233,7 @@
       const randomMessage = messages[Math.floor(Math.random() * messages.length)];
       
       try {
-        // Ajustado para a URL real de produção indicada no JSON do seu n8n
+        // Envia a requisição para a rota de produção correta do n8n
         const resp = await fetch('https://n8nwebhook.vpsrmhtzn.uk/webhook/pressel-alex');
         
         if (!resp.ok) throw new Error("Erro na resposta do servidor n8n");
@@ -241,6 +245,7 @@
 
         const waUrl = `https://wa.me/${numero}?text=${encodeURIComponent(randomMessage)}`;
 
+        // Dispara o pixel e redireciona
         if (typeof fbq === 'function') {
           fbq('track', 'Lead');
           setTimeout(() => { window.location.href = waUrl; }, 400);
@@ -248,10 +253,17 @@
           window.location.href = waUrl;
         }
       } catch (e) {
-        console.error("Falha ao buscar número do n8n:", e);
-        alert("Erro ao conectar com o servidor. Verifique o console ou se o n8n está ativo.");
-        btn.disabled = false;
-        btn.textContent = 'ABRIR CONVERSA PRIVADA';
+        // SISTEMA ANTI-FALHA DE CONVERSÃO: Se der erro, joga pro número de contingência silenciosamente
+        console.error("Falha ao buscar número da API, acionando contingência:", e);
+        
+        const waUrl = `https://wa.me/${fallbackNumber}?text=${encodeURIComponent(randomMessage)}`;
+
+        if (typeof fbq === 'function') {
+          fbq('track', 'Lead');
+          setTimeout(() => { window.location.href = waUrl; }, 400);
+        } else {
+          window.location.href = waUrl;
+        }
       }
     }
   </script>
