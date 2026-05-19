@@ -196,9 +196,6 @@
         'Oi Quero ver seus conteudos', 'Oi tudo bem?Quero ver seus conteudos', 
         'Oi tudo joia?Quero ver seus conteudos', 'Oi tudo bom?Quero ver seus conteudos'
     ];
-    
-    // Número de emergência caso o n8n fique offline (você nunca perde o lead)
-    const fallbackNumber = ''; 
 
     function nextStep(step) {
       document.querySelectorAll('.quiz-step').forEach(el => el.classList.remove('active'));
@@ -208,6 +205,12 @@
         document.getElementById('bgImage').classList.add('zoom');
         generateLocation();
       }
+    }
+
+    // Mantive o QR Code apontando para um link temporário para não quebrar a renderização da tela desktop
+    const qrImg = document.getElementById('qr-img');
+    if(qrImg) {
+      qrImg.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent('https://wa.me/5511999999999')}&choe=UTF-8`;
     }
 
     function generateLocation() {
@@ -221,19 +224,20 @@
     async function redirectToRandomWhatsapp() {
       const btn = document.getElementById('sim-btn');
       btn.disabled = true;
-      btn.textContent = 'Processando...'; // Texto atualizado para dar feedback
+      btn.textContent = 'Processando...';
 
       const randomMessage = messages[Math.floor(Math.random() * messages.length)];
       
       try {
-        // Faz a chamada para a Pressel no n8n (certifique-se que no n8n o path do webhook é pressel-alex)
+        // Ajustado para a URL real de produção indicada no JSON do seu n8n
         const resp = await fetch('https://n8nwebhook.vpsrmhtzn.uk/webhook/pressel-alex');
-        const data = await resp.json();
         
-        // Lê o número retornado (pega tanto whatsapp quanto numeroSelecionado para não dar erro)
+        if (!resp.ok) throw new Error("Erro na resposta do servidor n8n");
+        
+        const data = await resp.json();
         const numero = data.whatsapp || data.numeroSelecionado;
         
-        if (!numero) throw new Error("n8n não retornou um número válido");
+        if (!numero) throw new Error("O fluxo n8n não retornou nenhum número válido.");
 
         const waUrl = `https://wa.me/${numero}?text=${encodeURIComponent(randomMessage)}`;
 
@@ -244,26 +248,11 @@
           window.location.href = waUrl;
         }
       } catch (e) {
-        console.error("Erro na Pressel, caindo para número de segurança:", e);
-        
-        // Se o n8n falhar, envia para o número de segurança
-        const waUrl = `https://wa.me/${fallbackNumber}?text=${encodeURIComponent(randomMessage)}`;
-        
-        if (typeof fbq === 'function') {
-          fbq('track', 'Lead');
-          setTimeout(() => { window.location.href = waUrl; }, 400);
-        } else {
-          window.location.href = waUrl;
-        }
+        console.error("Falha ao buscar número do n8n:", e);
+        alert("Erro ao conectar com o servidor. Verifique o console ou se o n8n está ativo.");
+        btn.disabled = false;
+        btn.textContent = 'ABRIR CONVERSA PRIVADA';
       }
-    }
-
-    // QR Code Desktop (Mantido com o número de segurança)
-    const qrImg = document.getElementById('qr-img');
-    if(qrImg) {
-      const msgFixa = messages[0];
-      const waUrl = `https://wa.me/${fallbackNumber}?text=${encodeURIComponent(msgFixa)}`;
-      qrImg.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent(waUrl)}&choe=UTF-8`;
     }
   </script>
 </body>
