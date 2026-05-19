@@ -99,105 +99,24 @@
       'https://connect.facebook.net/en_US/fbevents.js');
     fbq('init', '1673968253270388');
     fbq('track', 'PageView');
-  </script>
-</head>
-<body class="antialiased">
-
-  <div class="video-bg" id="bgImage"></div>
-  <div class="overlay"></div>
-
-  <main class="mobile-only min-h-screen flex items-center justify-center p-6">
-    <div class="w-full max-w-lg mx-auto">
-      
-      <div id="quiz-container" class="card">
-        
-        <div id="step-1" class="quiz-step active">
-          <div class="text-center mb-6">
-            <img src="https://s3.canalwpp.com/sarah/fotoperfil.jpeg" class="w-24 h-24 rounded-full mx-auto border-4 border-white/20 shadow-xl mb-4 object-cover">
-            
-            <div class="flex items-center justify-center gap-2 mb-2">
-                <span class="relative flex h-3 w-3">
-                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                </span>
-                <span class="text-xs font-bold text-green-400 uppercase tracking-wide">Online Agora</span>
-            </div>
-
-            <h2 class="text-lg font-bold leading-snug">Sarah está online agora, vamos conversar no WhatsApp?</h2>
-          </div>
-          <button class="btn-quiz btn-primary" onclick="nextStep(2)">Sim 😈</button>
-          <button class="btn-quiz" onclick="nextStep(2)">Não</button> </div>
-
-        <div id="step-2" class="quiz-step">
-          <div class="mb-6 text-center">
-            <h2 class="text-xl font-bold mb-2">Uma pergunta rápida...</h2>
-            <p class="text-white/80 text-lg">Eu realmente respondo, mas não gosto de perder tempo atoa. Você vai me dar atenção?</p>
-          </div>
-          <button class="btn-quiz btn-primary" onclick="nextStep(3)">Sim, prometo! ❤️</button>
-          <button class="btn-quiz" onclick="nextStep(3)">Com certeza</button>
-        </div>
-
-        <div id="step-3" class="quiz-step">
-          <div class="mb-6 text-center">
-            <h2 class="text-xl font-bold text-pink-500 italic mb-3">Última etapa...</h2>
-            <p class="text-white/90 text-lg font-medium">Eu quero te mostrar umas coisinhas 🔞😈, posso? 😏</p>
-          </div>
-          <button class="btn-quiz btn-primary" onclick="nextStep(4)">Pode sim! 🔥</button>
-          <button class="btn-quiz" onclick="nextStep(4)">Quero ver tudo</button>
-        </div>
-
-        <div id="step-4" class="quiz-step">
-          <div class="flex items-center gap-4 mb-4 bg-white/5 p-3 rounded-xl border border-white/10">
-            <img src="https://s3.canalwpp.com/sarah/fotoperfil.jpeg" class="w-16 h-16 rounded-full border-2 border-green-400 object-cover">
-            <div>
-              <div class="text-xs text-green-400 flex items-center gap-1 mb-1">
-                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> Sarah Hadassa
-              </div>
-              <div id="location-display" class="text-sm font-bold text-white/90">
-                  Calculando distância...
-              </div>
-            </div>
-          </div>
-          
-          <p class="text-sm text-white/70 mb-6 text-center">
-            Amei suas respostas! Já vi que a gente vai se dar muito bem... Me chama no WhatsApp agora pra eu te mandar o que prometi? 🔥
-          </p>
-
-          <button id="sim-btn" class="w-full py-4 rounded-xl font-extrabold text-lg shadow-xl pulse-cta bg-gradient-to-r from-pink-500 to-orange-500 border-none" onclick="redirectToRandomWhatsapp()">
-            ABRIR CONVERSA PRIVADA
-          </button>
-          
-          <div class="mt-4 text-center text-[10px] text-white/40">
-            Privacidade Garantida · Respostas Reais · Sem Fake
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </main>
-
-  <div class="hidden md:flex min-h-screen bg-black text-white items-center justify-center p-6 text-center">
-    <div class="card max-w-md">
-      <h2 class="text-2xl font-bold mb-4">Acesse pelo Celular</h2>
-      <p class="text-white/60 mb-6">O conteúdo da Sarah é otimizado para dispositivos móveis.</p>
-      <div id="qr-container" class="bg-white p-4 rounded-xl inline-block mb-4">
-        <img id="qr-img" src="" width="150">
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // --- DADOS E LÓGICA ---
-    
-    const messages = [
-        'Oi quero ver seus conteudos', 'Oi gata quero ver seus conteudos',
-        'Oi gatinha quero ver seus conteudos', 'Oi anjo quero ver seus conteudos',
-        'Oi Quero ver seus conteudos', 'Oi tudo bem?Quero ver seus conteudos', 
-        'Oi tudo joia?Quero ver seus conteudos', 'Oi tudo bom?Quero ver seus conteudos'
+<script>
+    // --- SUA CENTRAL DE NÚMEROS (Pode colocar os 20 aqui) ---
+    // Coloque apenas os números, entre aspas, separados por vírgula.
+    const whatsappNumbers = [
+      '556183200152', // Celular 1
+      '556181898638', // Celular 2
+      '573018367073', // Celular 3
+      // '551199999994', // Celular 4 (basta tirar as duas barras // para ativar)
+      // '551199999995', // Celular 5
+      // Adicione até o 20...
     ];
-    
-    // LISTA DE NÚMEROS PARA RANDOMIZAR (50/50)
-    const whatsappNumbers = ['556183200152', '556181898638','573018367073']; 
+
+    const messages = [
+        'Oi quero ver seus conteudos', 
+        'Oi gata quero ver seus conteudos',
+        'Oi gatinha quero ver seus conteudos', 
+        'Oi anjo quero ver seus conteudos'
+    ];
 
     function nextStep(step) {
       document.querySelectorAll('.quiz-step').forEach(el => el.classList.remove('active'));
@@ -209,40 +128,44 @@
       }
     }
 
+    // Código do QR Code para quem acessar pelo computador
+    const qrImg = document.getElementById('qr-img');
+    if(qrImg) {
+      // Pega um número aleatório também para o QR code
+      const randomQRNumber = whatsappNumbers[Math.floor(Math.random() * whatsappNumbers.length)];
+      qrImg.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=https://wa.me/${randomQRNumber}&choe=UTF-8`;
+    }
+
     function generateLocation() {
         const minKm = 5;
         const maxKm = 31;
         const randomKm = Math.floor(Math.random() * (maxKm - minKm + 1)) + minKm;
-        const locDisplay = document.getElementById('location-display');
-        locDisplay.innerHTML = `📍 Perto de você! Na sua região, a somente <span class="text-green-400">${randomKm} km</span> disponível para conversar.`;
+        document.getElementById('location-display').innerHTML = `📍 Perto de você! A somente <span class="text-green-400">${randomKm} km</span>.`;
     }
 
+    // A MÁGICA DA DISTRIBUIÇÃO ACONTECE AQUI
     function redirectToRandomWhatsapp() {
       const btn = document.getElementById('sim-btn');
       btn.disabled = true;
-      btn.textContent = 'Chamando...';
+      btn.textContent = 'Verificando vaga...';
 
-      // Sorteia o número e a mensagem
-      const randomNumber = whatsappNumbers[Math.floor(Math.random() * whatsappNumbers.length)];
+      // 1. O código sorteia um número da sua lista de forma totalmente aleatória
+      const numeroSorteado = whatsappNumbers[Math.floor(Math.random() * whatsappNumbers.length)];
+      
+      // 2. Sorteia uma mensagem
       const randomMessage = messages[Math.floor(Math.random() * messages.length)];
       
-      const waUrl = `https://wa.me/${randomNumber}?text=${encodeURIComponent(randomMessage)}`;
-
+      // 3. Monta o link do WhatsApp
+      const waUrl = `https://wa.me/${numeroSorteado}?text=${encodeURIComponent(randomMessage)}`;
+      
+      // 4. Marca o Pixel do Meta e Redireciona o Lead
       if (typeof fbq === 'function') {
         fbq('track', 'Lead');
+        // Espera 400 milissegundos para dar tempo do Meta registrar o evento
         setTimeout(() => { window.location.href = waUrl; }, 400);
       } else {
         window.location.href = waUrl;
       }
-    }
-
-    // QR Code Desktop (Também pega um número aleatório ao carregar)
-    const qrImg = document.getElementById('qr-img');
-    if(qrImg) {
-      const randomNumQR = whatsappNumbers[Math.floor(Math.random() * whatsappNumbers.length)];
-      const msgFixa = messages[0];
-      const waUrl = `https://wa.me/${randomNumQR}?text=${encodeURIComponent(msgFixa)}`;
-      qrImg.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent(waUrl)}&choe=UTF-8`;
     }
   </script>
 </body>
