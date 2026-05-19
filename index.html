@@ -12,9 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
   <style>
-    :root{
-      --glass: rgba(0,0,0,0.48);
-    }
+    :root{ --glass: rgba(0,0,0,0.48); }
     html,body{height:100%}
     body{
       margin:0;
@@ -23,7 +21,6 @@
       color:#fff;
       -webkit-font-smoothing:antialiased;
     }
-
     .video-bg{
       position:fixed;
       inset:0;
@@ -37,7 +34,6 @@
     }
     .video-bg.zoom { transform: scale(1.1); filter: blur(4px); }
     .overlay{ position:fixed; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.4), rgba(0,0,0,0.9)); z-index:-5; }
-
     .card {
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(20px);
@@ -46,15 +42,12 @@
       padding: 24px;
       box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
     }
-
     .quiz-step { display: none; }
     .quiz-step.active { display: block; animation: fadeIn 0.4s ease-out; }
-
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
     .btn-quiz {
       width: 100%;
       padding: 16px;
@@ -71,35 +64,20 @@
       gap: 8px;
     }
     .btn-quiz:active { transform: scale(0.98); background: rgba(255,255,255,0.2); }
-    
     .btn-primary {
       background: linear-gradient(90deg, #ec4899, #f97316); 
       border: none;
       color: white;
     }
-
     .pulse-cta { animation: pulse 1.6s infinite; }
     @keyframes pulse {
       0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,100,150,0.4); }
       70% { transform: scale(1.02); box-shadow: 0 10px 30px 0 rgba(255,100,150,0); }
       100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,100,150,0); }
     }
-
     @media (min-width: 769px) { .mobile-only { display:none !important; } }
   </style>
 
-  <script>
-    !function(f,b,e,v,n,t,s){
-      if(f.fbq) return; n=f.fbq=function(){ n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq) f._fbq=n; n.push=n; n.loaded=!0; n.version='2.0';
-      n.queue=[]; t=b.createElement(e); t.async=!0;
-      t.src=v; s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)}(window, document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '1673968253270388');
-    fbq('track', 'PageView');
-  </script>
 </head>
 <body class="antialiased">
 
@@ -167,10 +145,6 @@
           <button id="sim-btn" class="w-full py-4 rounded-xl font-extrabold text-lg shadow-xl pulse-cta bg-gradient-to-r from-pink-500 to-orange-500 border-none" onclick="redirectToRandomWhatsapp()">
             ABRIR CONVERSA PRIVADA
           </button>
-          
-          <div class="mt-4 text-center text-[10px] text-white/40">
-            Privacidade Garantida · Respostas Reais · Sem Fake
-          </div>
         </div>
 
       </div>
@@ -188,82 +162,71 @@
   </div>
 
   <script>
-    // --- DADOS E LÓGICA ---
+    // --- DADOS E LÓGICA MODO DEBUG (SEM FALLBACK) ---
     
-    // NÚMERO DE SEGURANÇA (Se o n8n ou o banco falharem, o lead vai para cá e você não perde a venda)
-     
-
     const messages = [
         'Oi quero ver seus conteudos', 'Oi gata quero ver seus conteudos',
-        'Oi gatinha quero ver seus conteudos', 'Oi anjo quero ver seus conteudos',
-        'Oi Quero ver seus conteudos', 'Oi tudo bem?Quero ver seus conteudos', 
-        'Oi tudo joia?Quero ver seus conteudos', 'Oi tudo bom?Quero ver seus conteudos'
+        'Oi gatinha quero ver seus conteudos', 'Oi anjo quero ver seus conteudos'
     ];
 
     function nextStep(step) {
       document.querySelectorAll('.quiz-step').forEach(el => el.classList.remove('active'));
       document.getElementById('step-' + step).classList.add('active');
-      
       if(step === 4) {
         document.getElementById('bgImage').classList.add('zoom');
         generateLocation();
       }
     }
 
-    // Configura o QR Code Desktop apontando para o seu número real de contingência
+    // QR Code visualmente genérico apenas para não quebrar no desktop
     const qrImg = document.getElementById('qr-img');
     if(qrImg) {
-      const msgFixa = messages[0];
-      qrImg.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent('https://wa.me/' + fallbackNumber + '?text=' + msgFixa)}&choe=UTF-8`;
+      qrImg.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=https://wa.me/5511999999999&choe=UTF-8`;
     }
 
     function generateLocation() {
         const minKm = 5;
         const maxKm = 31;
         const randomKm = Math.floor(Math.random() * (maxKm - minKm + 1)) + minKm;
-        const locDisplay = document.getElementById('location-display');
-        locDisplay.innerHTML = `📍 Perto de você! Na sua região, a somente <span class="text-green-400">${randomKm} km</span> disponível para conversar.`;
+        document.getElementById('location-display').innerHTML = `📍 Perto de você! A somente <span class="text-green-400">${randomKm} km</span>.`;
     }
 
     async function redirectToRandomWhatsapp() {
       const btn = document.getElementById('sim-btn');
       btn.disabled = true;
-      btn.textContent = 'Processando...';
+      btn.textContent = 'Chamando n8n...';
 
       const randomMessage = messages[Math.floor(Math.random() * messages.length)];
       
       try {
-        // Envia a requisição para a rota de produção correta do n8n
+        // Envia a requisição
         const resp = await fetch('https://n8nwebhook.vpsrmhtzn.uk/webhook/pressel-alex');
         
-        if (!resp.ok) throw new Error("Erro na resposta do servidor n8n");
+        if (!resp.ok) {
+          throw new Error(`Erro na resposta do n8n: Status HTTP ${resp.status}`);
+        }
         
         const data = await resp.json();
+        
         const numero = data.whatsapp || data.numeroSelecionado;
         
-        if (!numero) throw new Error("O fluxo n8n não retornou nenhum número válido.");
+        if (!numero) {
+          throw new Error("O fluxo n8n rodou, mas devolveu um JSON sem nenhum número válido.");
+        }
 
         const waUrl = `https://wa.me/${numero}?text=${encodeURIComponent(randomMessage)}`;
-
-        // Dispara o pixel e redireciona
-        if (typeof fbq === 'function') {
-          fbq('track', 'Lead');
-          setTimeout(() => { window.location.href = waUrl; }, 400);
-        } else {
-          window.location.href = waUrl;
-        }
-      } catch (e) {
-        // SISTEMA ANTI-FALHA DE CONVERSÃO: Se der erro, joga pro número de contingência silenciosamente
-        console.error("Falha ao buscar número da API, acionando contingência:", e);
         
-        const waUrl = `https://wa.me/${fallbackNumber}?text=${encodeURIComponent(randomMessage)}`;
+        // AVISO DE SUCESSO ANTES DE REDIRECIONAR PARA CONFIRMARMOS QUE FUNCIONOU
+        alert("✔️ SUCESSO!\n\nO n8n devolveu o número: " + numero + "\n\nO redirecionamento vai acontecer agora.");
+        window.location.href = waUrl;
 
-        if (typeof fbq === 'function') {
-          fbq('track', 'Lead');
-          setTimeout(() => { window.location.href = waUrl; }, 400);
-        } else {
-          window.location.href = waUrl;
-        }
+      } catch (e) {
+        // AVISO DE ERRO DETALHADO NA TELA
+        alert("❌ ERRO NA COMUNICAÇÃO COM O N8N!\n\nMotivo do Erro:\n" + e.message + "\n\n1. Verifique se ativou o 'Respond with CORS' no nó de Webhook do n8n.\n2. Verifique se a chave de Workflow 'Active' está ligada no topo da tela do n8n.");
+        console.error(e);
+        
+        btn.disabled = false;
+        btn.textContent = 'ABRIR CONVERSA PRIVADA';
       }
     }
   </script>
