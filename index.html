@@ -162,7 +162,12 @@
   </div>
 
   <script>
-    // --- LISTA DE MENSAGENS ALEATÓRIAS ---
+    // Coloque aqui os seus números ativos que estão no Supabase
+    const whatsappNumbers = [
+      '556183200152',
+      '5511999999999' // Adicione quantos quiser separados por vírgula
+    ];
+
     const messages = [
         'Oi quero ver seus conteudos', 'Oi gata quero ver seus conteudos',
         'Oi gatinha quero ver seus conteudos', 'Oi anjo quero ver seus conteudos'
@@ -173,60 +178,33 @@
       document.getElementById('step-' + step).classList.add('active');
       if(step === 4) {
         document.getElementById('bgImage').classList.add('zoom');
-        generateLocation();
+        document.getElementById('location-display').innerHTML = `📍 Perto de você! A somente <span class="text-green-400">12 km</span>.`;
       }
     }
 
-    // Gerador simples de QR Code para Desktop
+    // QR Code para Desktop
     const qrImg = document.getElementById('qr-img');
     if(qrImg) {
-      qrImg.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=https://wa.me/556183200152&choe=UTF-8`;
+      qrImg.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=https://wa.me/${whatsappNumbers[0]}&choe=UTF-8`;
     }
 
-    function generateLocation() {
-        const minKm = 5;
-        const maxKm = 31;
-        const randomKm = Math.floor(Math.random() * (maxKm - minKm + 1)) + minKm;
-        document.getElementById('location-display').innerHTML = `📍 Perto de você! A somente <span class="text-green-400">${randomKm} km</span>.`;
-    }
-
-    async function redirectToRandomWhatsapp() {
+    function redirectToRandomWhatsapp() {
       const btn = document.getElementById('sim-btn');
       btn.disabled = true;
-      btn.textContent = 'Buscando vaga...';
+      btn.textContent = 'Chamando...';
 
+      // O JavaScript sorteia o número aqui mesmo, sem precisar do n8n (igual o do seu amigo)
+      const numeroSorteado = whatsappNumbers[Math.floor(Math.random() * whatsappNumbers.length)];
       const randomMessage = messages[Math.floor(Math.random() * messages.length)];
       
-      try {
-        // Faz a chamada para a rota de produção do n8n
-        const resp = await fetch('https://n8nwebhook.vpsrmhtzn.uk/webhook/pressel-alex');
-        
-        if (!resp.ok) {
-          throw new Error(`Servidor respondeu com status HTTP ${resp.status}`);
-        }
-        
-        const data = await resp.json();
-        
-        // Verifica se veio parametro correto
-        const numero = data.whatsapp || data.numeroSelecionado;
-        
-        if (!numero) {
-          throw new Error("O n8n respondeu, mas não enviou o campo 'whatsapp' ou 'numeroSelecionado' com o valor do número.");
-        }
-
-        const waUrl = `https://wa.me/${numero}?text=${encodeURIComponent(randomMessage)}`;
-        
-        // Alerta de sucesso antes do direcionamento
-        alert("✔️ CONEXÃO PERFEITA!\n\nO n8n respondeu com sucesso.\nNúmero obtido: " + numero);
+      const waUrl = `https://wa.me/${numeroSorteado}?text=${encodeURIComponent(randomMessage)}`;
+      
+      // Dispara o Pixel e redireciona na hora
+      if (typeof fbq === 'function') {
+        fbq('track', 'Lead');
+        setTimeout(() => { window.location.href = waUrl; }, 400);
+      } else {
         window.location.href = waUrl;
-
-      } catch (e) {
-        // Alerta inteligente de erro
-        alert("❌ FALHA DE CONEXÃO COM O N8N!\n\nO navegador reportou o seguinte erro:\n" + e.message + "\n\nSe o erro for 'Failed to fetch', significa que o CORS ainda está bloqueando a requisição no seu nó de Webhook do n8n.");
-        console.error(e);
-        
-        btn.disabled = false;
-        btn.textContent = 'ABRIR CONVERSA PRIVADA';
       }
     }
   </script>
