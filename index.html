@@ -12,7 +12,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
   <style>
-    :root{ --glass: rgba(0,0,0,0.48); }
+    :root{
+      --glass: rgba(0,0,0,0.48);
+    }
     html,body{height:100%}
     body{
       margin:0;
@@ -21,6 +23,7 @@
       color:#fff;
       -webkit-font-smoothing:antialiased;
     }
+
     .video-bg{
       position:fixed;
       inset:0;
@@ -34,6 +37,7 @@
     }
     .video-bg.zoom { transform: scale(1.1); filter: blur(4px); }
     .overlay{ position:fixed; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.4), rgba(0,0,0,0.9)); z-index:-5; }
+
     .card {
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(20px);
@@ -42,12 +46,15 @@
       padding: 24px;
       box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
     }
+
     .quiz-step { display: none; }
     .quiz-step.active { display: block; animation: fadeIn 0.4s ease-out; }
+
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
     .btn-quiz {
       width: 100%;
       padding: 16px;
@@ -64,20 +71,35 @@
       gap: 8px;
     }
     .btn-quiz:active { transform: scale(0.98); background: rgba(255,255,255,0.2); }
+    
     .btn-primary {
       background: linear-gradient(90deg, #ec4899, #f97316); 
       border: none;
       color: white;
     }
+
     .pulse-cta { animation: pulse 1.6s infinite; }
     @keyframes pulse {
       0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,100,150,0.4); }
       70% { transform: scale(1.02); box-shadow: 0 10px 30px 0 rgba(255,100,150,0); }
       100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,100,150,0); }
     }
+
     @media (min-width: 769px) { .mobile-only { display:none !important; } }
   </style>
 
+  <script>
+    !function(f,b,e,v,n,t,s){
+      if(f.fbq) return; n=f.fbq=function(){ n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq) f._fbq=n; n.push=n; n.loaded=!0; n.version='2.0';
+      n.queue=[]; t=b.createElement(e); t.async=!0;
+      t.src=v; s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1673968253270388');
+    fbq('track', 'PageView');
+  </script>
 </head>
 <body class="antialiased">
 
@@ -104,8 +126,7 @@
             <h2 class="text-lg font-bold leading-snug">Sarah está online agora, vamos conversar no WhatsApp?</h2>
           </div>
           <button class="btn-quiz btn-primary" onclick="nextStep(2)">Sim 😈</button>
-          <button class="btn-quiz" onclick="nextStep(2)">Não</button> 
-        </div>
+          <button class="btn-quiz" onclick="nextStep(2)">Não</button> </div>
 
         <div id="step-2" class="quiz-step">
           <div class="mb-6 text-center">
@@ -145,6 +166,10 @@
           <button id="sim-btn" class="w-full py-4 rounded-xl font-extrabold text-lg shadow-xl pulse-cta bg-gradient-to-r from-pink-500 to-orange-500 border-none" onclick="redirectToRandomWhatsapp()">
             ABRIR CONVERSA PRIVADA
           </button>
+          
+          <div class="mt-4 text-center text-[10px] text-white/40">
+            Privacidade Garantida · Respostas Reais · Sem Fake
+          </div>
         </div>
 
       </div>
@@ -162,30 +187,34 @@
   </div>
 
   <script>
-    // Coloque aqui os seus números ativos que estão no Supabase
-    const whatsappNumbers = [
-      '556183200152',
-      '5511999999999' // Adicione quantos quiser separados por vírgula
-    ];
-
+    // --- DADOS E LÓGICA ---
+    
     const messages = [
         'Oi quero ver seus conteudos', 'Oi gata quero ver seus conteudos',
-        'Oi gatinha quero ver seus conteudos', 'Oi anjo quero ver seus conteudos'
+        'Oi gatinha quero ver seus conteudos', 'Oi anjo quero ver seus conteudos',
+        'Oi Quero ver seus conteudos', 'Oi tudo bem?Quero ver seus conteudos', 
+        'Oi tudo joia?Quero ver seus conteudos', 'Oi tudo bom?Quero ver seus conteudos'
     ];
+    
+    // LISTA DE NÚMEROS PARA RANDOMIZAR (50/50)
+    const whatsappNumbers = ['556183200152', '556181898638','573018367073']; 
 
     function nextStep(step) {
       document.querySelectorAll('.quiz-step').forEach(el => el.classList.remove('active'));
       document.getElementById('step-' + step).classList.add('active');
+      
       if(step === 4) {
         document.getElementById('bgImage').classList.add('zoom');
-        document.getElementById('location-display').innerHTML = `📍 Perto de você! A somente <span class="text-green-400">12 km</span>.`;
+        generateLocation();
       }
     }
 
-    // QR Code para Desktop
-    const qrImg = document.getElementById('qr-img');
-    if(qrImg) {
-      qrImg.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=https://wa.me/${whatsappNumbers[0]}&choe=UTF-8`;
+    function generateLocation() {
+        const minKm = 5;
+        const maxKm = 31;
+        const randomKm = Math.floor(Math.random() * (maxKm - minKm + 1)) + minKm;
+        const locDisplay = document.getElementById('location-display');
+        locDisplay.innerHTML = `📍 Perto de você! Na sua região, a somente <span class="text-green-400">${randomKm} km</span> disponível para conversar.`;
     }
 
     function redirectToRandomWhatsapp() {
@@ -193,19 +222,27 @@
       btn.disabled = true;
       btn.textContent = 'Chamando...';
 
-      // O JavaScript sorteia o número aqui mesmo, sem precisar do n8n (igual o do seu amigo)
-      const numeroSorteado = whatsappNumbers[Math.floor(Math.random() * whatsappNumbers.length)];
+      // Sorteia o número e a mensagem
+      const randomNumber = whatsappNumbers[Math.floor(Math.random() * whatsappNumbers.length)];
       const randomMessage = messages[Math.floor(Math.random() * messages.length)];
       
-      const waUrl = `https://wa.me/${numeroSorteado}?text=${encodeURIComponent(randomMessage)}`;
-      
-      // Dispara o Pixel e redireciona na hora
+      const waUrl = `https://wa.me/${randomNumber}?text=${encodeURIComponent(randomMessage)}`;
+
       if (typeof fbq === 'function') {
         fbq('track', 'Lead');
         setTimeout(() => { window.location.href = waUrl; }, 400);
       } else {
         window.location.href = waUrl;
       }
+    }
+
+    // QR Code Desktop (Também pega um número aleatório ao carregar)
+    const qrImg = document.getElementById('qr-img');
+    if(qrImg) {
+      const randomNumQR = whatsappNumbers[Math.floor(Math.random() * whatsappNumbers.length)];
+      const msgFixa = messages[0];
+      const waUrl = `https://wa.me/${randomNumQR}?text=${encodeURIComponent(msgFixa)}`;
+      qrImg.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent(waUrl)}&choe=UTF-8`;
     }
   </script>
 </body>
