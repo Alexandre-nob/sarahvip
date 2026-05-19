@@ -162,8 +162,7 @@
   </div>
 
   <script>
-    // --- DADOS E LÓGICA MODO DEBUG (SEM FALLBACK) ---
-    
+    // --- LISTA DE MENSAGENS ALEATÓRIAS ---
     const messages = [
         'Oi quero ver seus conteudos', 'Oi gata quero ver seus conteudos',
         'Oi gatinha quero ver seus conteudos', 'Oi anjo quero ver seus conteudos'
@@ -178,10 +177,10 @@
       }
     }
 
-    // QR Code visualmente genérico apenas para não quebrar no desktop
+    // Gerador simples de QR Code para Desktop
     const qrImg = document.getElementById('qr-img');
     if(qrImg) {
-      qrImg.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=https://wa.me/5511999999999&choe=UTF-8`;
+      qrImg.src = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=https://wa.me/556183200152&choe=UTF-8`;
     }
 
     function generateLocation() {
@@ -194,35 +193,36 @@
     async function redirectToRandomWhatsapp() {
       const btn = document.getElementById('sim-btn');
       btn.disabled = true;
-      btn.textContent = 'Chamando n8n...';
+      btn.textContent = 'Buscando vaga...';
 
       const randomMessage = messages[Math.floor(Math.random() * messages.length)];
       
       try {
-        // Envia a requisição
+        // Faz a chamada para a rota de produção do n8n
         const resp = await fetch('https://n8nwebhook.vpsrmhtzn.uk/webhook/pressel-alex');
         
         if (!resp.ok) {
-          throw new Error(`Erro na resposta do n8n: Status HTTP ${resp.status}`);
+          throw new Error(`Servidor respondeu com status HTTP ${resp.status}`);
         }
         
         const data = await resp.json();
         
+        // Verifica se veio parametro correto
         const numero = data.whatsapp || data.numeroSelecionado;
         
         if (!numero) {
-          throw new Error("O fluxo n8n rodou, mas devolveu um JSON sem nenhum número válido.");
+          throw new Error("O n8n respondeu, mas não enviou o campo 'whatsapp' ou 'numeroSelecionado' com o valor do número.");
         }
 
         const waUrl = `https://wa.me/${numero}?text=${encodeURIComponent(randomMessage)}`;
         
-        // AVISO DE SUCESSO ANTES DE REDIRECIONAR PARA CONFIRMARMOS QUE FUNCIONOU
-        alert("✔️ SUCESSO!\n\nO n8n devolveu o número: " + numero + "\n\nO redirecionamento vai acontecer agora.");
+        // Alerta de sucesso antes do direcionamento
+        alert("✔️ CONEXÃO PERFEITA!\n\nO n8n respondeu com sucesso.\nNúmero obtido: " + numero);
         window.location.href = waUrl;
 
       } catch (e) {
-        // AVISO DE ERRO DETALHADO NA TELA
-        alert("❌ ERRO NA COMUNICAÇÃO COM O N8N!\n\nMotivo do Erro:\n" + e.message + "\n\n1. Verifique se ativou o 'Respond with CORS' no nó de Webhook do n8n.\n2. Verifique se a chave de Workflow 'Active' está ligada no topo da tela do n8n.");
+        // Alerta inteligente de erro
+        alert("❌ FALHA DE CONEXÃO COM O N8N!\n\nO navegador reportou o seguinte erro:\n" + e.message + "\n\nSe o erro for 'Failed to fetch', significa que o CORS ainda está bloqueando a requisição no seu nó de Webhook do n8n.");
         console.error(e);
         
         btn.disabled = false;
