@@ -35,92 +35,93 @@
     .loading {
       animation: rotate 1s linear infinite;
       border: 5px solid #4F4F4F; /* Cinza escuro */
-      border-top: 5px solid #ec4899; /* Rosa/Neon moderno para o carregando */
+      border-top: 5px solid #00FF00; /* Parte superior em verde */
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      height: 50px;
+      width: 50px;
+      margin-top: 10px;
     }
     @keyframes rotate {
+      0% { transform: rotate(0); }
       100% { transform: rotate(360deg); }
     }
   </style>
 
+  <!-- Facebook Pixel Code - PageView para 2 pixels -->
   <script>
     !function(f,b,e,v,n,t,s){
-      if(f.fbq) return; n=f.fbq=function(){ n.callMethod?
+      if(f.fbq)return;n=f.fbq=function(){n.callMethod?
       n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-      if(!f._fbq) f._fbq=n; n.push=n; n.loaded=!0; n.version='2.0';
-      n.queue=[]; t=b.createElement(e); t.async=!0;
-      t.src=v; s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)}(window, document,'script',
-      'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '1673968253270388'); // Seu Pixel aplicado aqui
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)
+    }(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');
+
+    fbq('init', '1673968253270388');
+    fbq('init', '1673968253270388');
     fbq('track', 'PageView');
   </script>
-</head>
-<body onload="redirecionar();">
-
-  <div class="loading-container">
-    <h1>Aguarde alguns segundos...</h1>
-    <div class="loading"></div>
-  </div>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+         src="https://www.facebook.com/tr?id=1673968253270388&ev=PageView&noscript=1"/>
+    <img height="1" width="1" style="display:none"
+         src="https://www.facebook.com/tr?id=1673968253270388&ev=PageView&noscript=1"/>
+  </noscript>
 
   <script>
-    // Seu número de segurança caso o n8n falhe por algum motivo
-    const defaultWhatsapp = '556183200152'; 
-
+    // A função redirecionar será definida e chamada ao carregar a página
+    // Isso garante que ela esteja pronta para o body.onload
     async function redirecionar() {
-        // Pega os parâmetros de texto que vierem na URL se houver
-        const urlParams = new URLSearchParams(window.location.search);
-        let textParam = urlParams.get('text') || 'Oi quero ver seus conteudos';
+        // **IMPORTANTE**: CONFIRME ESTA URL. É a URL de PRODUÇÃO do seu Webhook no n8n.
+        const N8N_WEBHOOK_URL = 'https://webhook.canalwpp.com/webhook/pressel-alex'; 
+        const defaultWhatsapp = '556183200152'; // Um WhatsApp de fallback para emergências
+        const textParam = encodeURIComponent('Oi quero comprar seus conteudos'); 
 
         try {
-            // CHAMANDO A SUA WEBHOOK DO N8N (Configurada com a sua rota 'pressel')
-            const response = await fetch('https://webhook.canalwpp.com/webhook/pressel-alex', {
-                method: 'GET'
+            const response = await fetch(N8N_WEBHOOK_URL, {
+                method: 'GET', 
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             });
 
             if (!response.ok) {
-                throw new Error('Servidor n8n respondeu com erro');
+                console.error('Erro na resposta HTTP do n8n:', response.status, response.statusText);
+                const fallbackUrl = `https://wa.me/${defaultWhatsapp}?text=${textParam}`;
+                window.location.href = fallbackUrl;
+                return;
             }
 
             const data = await response.json();
 
             let finalWhatsappNumber;
-            // Verifica as possíveis propriedades de retorno do seu n8n
             if (data && data.whatsapp && String(data.whatsapp).trim() !== '') { 
                 finalWhatsappNumber = data.whatsapp;
-            } else if (data && data.numeroSelecionado && String(data.numeroSelecionado).trim() !== '') {
-                finalWhatsappNumber = data.numeroSelecionado;
             } else {
-                console.error('A propriedade "whatsapp" não foi encontrada. Usando WhatsApp padrão.');
+                console.error('A propriedade "whatsapp" não foi encontrada na resposta do n8n, está vazia ou a resposta está malformada. Usando WhatsApp padrão.');
                 finalWhatsappNumber = defaultWhatsapp;
             }
 
-            const whatsappRedirectUrl = `https://wa.me/${finalWhatsappNumber}?text=${encodeURIComponent(textParam)}`;
-            
-            // Dispara o Lead e Redireciona
-            if (typeof fbq === 'function') {
-                fbq('track', 'Lead');
-                setTimeout(() => { window.location.href = whatsappRedirectUrl; }, 400);
-            } else {
-                window.location.href = whatsappRedirectUrl;
-            }
-
+            const whatsappRedirectUrl = `https://wa.me/${finalWhatsappNumber}?text=${textParam}`;
+            window.location.href = whatsappRedirectUrl;
+            return;
         } catch (error) {
             console.error('Erro ao comunicar com o n8n ou processar resposta:', error);
-            // Se der qualquer erro na VPS, joga pro seu número padrão para você nunca perder o lead!
-            const fallbackUrl = `https://wa.me/${defaultWhatsapp}?text=${encodeURIComponent(textParam)}`;
-            
-            if (typeof fbq === 'function') {
-                fbq('track', 'Lead');
-                setTimeout(() => { window.location.href = fallbackUrl; }, 400);
-            } else {
-                window.location.href = fallbackUrl;
-            }
+            const fallbackUrl = `https://wa.me/${defaultWhatsapp}?text=${textParam}`;
+            window.location.href = fallbackUrl;
+            return;
         }
     }
+    // Não precisa de IIFE ou atribuição a window.redirecionar se a função estiver definida no escopo global antes do onload
+    // e o onload estiver no <body>. O navegador garante a disponibilidade.
   </script>
+</head>
+<body onload="redirecionar();">
+  <div class="loading-container">
+    <h1>Aguarde alguns segundos...</h1>
+    <div class="loading"></div>
+  </div>
 </body>
 </html>
 
