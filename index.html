@@ -1,436 +1,154 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Sarah — Perfil Verificado</title>
+<script>
+  const messages = [
+    'Oi amor, quero ver seus conteúdos 😈',
+    'Oi gata, quero desbloquear tudo 🔥',
+    'Oi Sarah, quero ver suas fotos privadas 😏',
+    'Oi linda, me manda seu conteúdo 👀',
+    'Oi bebê, quero acessar tudo agora ❤️',
+    'Oi amor, quero entrar no seu VIP 🔞',
+    'Oi princesa, quero ver seus vídeos 😈'
+  ];
 
-  <script src="https://cdn.tailwindcss.com"></script>
+  // VÁRIOS NÚMEROS
+  const whatsappNumbers = [
+    '556183200152',
+    '573123898393',
+    '573124671998',
+    '573159610615'
+  ];
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  let currentStep = 1;
 
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
-    rel="stylesheet"
-  >
+  function nextStep(step){
 
-  <style>
-    :root{
-      --glass: rgba(0,0,0,0.48);
+    // vibração no celular
+    if(navigator.vibrate){
+      navigator.vibrate(30);
     }
 
-    html,body{
-      height:100%;
+    const current = document.getElementById(`step-${currentStep}`);
+    const next = document.getElementById(`step-${step}`);
+
+    if(current){
+      current.classList.remove('active');
     }
 
-    body{
-      margin:0;
-      font-family:'Inter',system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
-      background:#000;
-      color:#fff;
-      -webkit-font-smoothing:antialiased;
-    }
+    setTimeout(() => {
+      next.classList.add('active');
+    },120);
 
-    .video-bg{
-      position:fixed;
-      inset:0;
-      z-index:-10;
-      width:100%;
-      height:100%;
-      background-image:url('https://s3.canalwpp.com/sarah/fundoperfil.jpeg');
-      background-size:cover;
-      background-position:center;
-      transition:filter 1s ease,transform 14s linear;
-    }
+    currentStep = step;
 
-    .video-bg.zoom{
-      transform:scale(1.1);
-      filter:blur(4px);
-    }
+    // efeito final
+    if(step === 4){
 
-    .overlay{
-      position:fixed;
-      inset:0;
-      background:linear-gradient(180deg,rgba(0,0,0,0.4),rgba(0,0,0,0.9));
-      z-index:-5;
-    }
+      document
+        .getElementById('bgImage')
+        .classList.add('zoom');
 
-    .card{
-      background:rgba(255,255,255,0.05);
-      backdrop-filter:blur(20px);
-      border:1px solid rgba(255,255,255,0.1);
-      border-radius:24px;
-      padding:24px;
-      box-shadow:0 10px 40px -10px rgba(0,0,0,0.5);
-    }
+      generateLocation();
 
-    .quiz-step{
-      display:none;
-    }
-
-    .quiz-step.active{
-      display:block;
-      animation:fadeIn 0.4s ease-out;
-    }
-
-    @keyframes fadeIn{
-      from{
-        opacity:0;
-        transform:translateY(10px);
-      }
-
-      to{
-        opacity:1;
-        transform:translateY(0);
+      // evento pixel
+      if(typeof fbq === 'function'){
+        fbq('track','InitiateCheckout');
       }
     }
-
-    .btn-quiz{
-      width:100%;
-      padding:16px;
-      margin-top:12px;
-      border-radius:12px;
-      background:rgba(255,255,255,0.1);
-      border:1px solid rgba(255,255,255,0.2);
-      font-weight:600;
-      transition:all 0.2s;
-      text-align:center;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      gap:8px;
-    }
-
-    .btn-quiz:active{
-      transform:scale(0.98);
-      background:rgba(255,255,255,0.2);
-    }
-
-    .btn-primary{
-      background:linear-gradient(90deg,#ec4899,#f97316);
-      border:none;
-      color:white;
-    }
-
-    .pulse-cta{
-      animation:pulse 1.6s infinite;
-    }
-
-    @keyframes pulse{
-      0%{
-        transform:scale(1);
-        box-shadow:0 0 0 0 rgba(255,100,150,0.4);
-      }
-
-      70%{
-        transform:scale(1.02);
-        box-shadow:0 10px 30px 0 rgba(255,100,150,0);
-      }
-
-      100%{
-        transform:scale(1);
-        box-shadow:0 0 0 0 rgba(255,100,150,0);
-      }
-    }
-
-    @media (min-width:769px){
-      .mobile-only{
-        display:none !important;
-      }
-    }
-  </style>
-
-  <script>
-    !function(f,b,e,v,n,t,s){
-      if(f.fbq) return;
-
-      n=f.fbq=function(){
-        n.callMethod
-          ? n.callMethod.apply(n,arguments)
-          : n.queue.push(arguments)
-      };
-
-      if(!f._fbq) f._fbq=n;
-
-      n.push=n;
-      n.loaded=!0;
-      n.version='2.0';
-      n.queue=[];
-
-      t=b.createElement(e);
-      t.async=!0;
-      t.src=v;
-
-      s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s);
-
-    }(
-      window,
-      document,
-      'script',
-      'https://connect.facebook.net/en_US/fbevents.js'
-    );
-
-    fbq('init','1219620626848870');
-    fbq('track','PageView');
-  </script>
-</head>
-
-<body class="antialiased">
-
-  <div class="video-bg" id="bgImage"></div>
-  <div class="overlay"></div>
-
-  <main class="mobile-only min-h-screen flex items-center justify-center p-6">
-    <div class="w-full max-w-lg mx-auto">
-
-      <div id="quiz-container" class="card">
-
-        <div id="step-1" class="quiz-step active">
-
-          <div class="text-center mb-6">
-
-            <img
-              src="https://s3.canalwpp.com/sarah/fotoperfil.jpeg"
-              class="w-24 h-24 rounded-full mx-auto border-4 border-white/20 shadow-xl mb-4 object-cover"
-            >
-
-            <div class="flex items-center justify-center gap-2 mb-2">
-
-              <span class="relative flex h-3 w-3">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-              </span>
-
-              <span class="text-xs font-bold text-green-400 uppercase tracking-wide">
-                Online Agora
-              </span>
-
-            </div>
-
-            <h2 class="text-lg font-bold leading-snug">
-              Sarah está online agora, vamos conversar no WhatsApp?
-            </h2>
-
-          </div>
-
-          <button class="btn-quiz btn-primary" onclick="nextStep(2)">
-            Sim 😈
-          </button>
-
-          <button class="btn-quiz" onclick="nextStep(2)">
-            Não
-          </button>
-
-        </div>
-
-        <div id="step-2" class="quiz-step">
-
-          <div class="mb-6 text-center">
-
-            <h2 class="text-xl font-bold mb-2">
-              Uma pergunta rápida...
-            </h2>
-
-            <p class="text-white/80 text-lg">
-              Eu realmente respondo, mas não gosto de perder tempo atoa.
-              Você vai me dar atenção?
-            </p>
-
-          </div>
-
-          <button class="btn-quiz btn-primary" onclick="nextStep(3)">
-            Sim, prometo! ❤️
-          </button>
-
-          <button class="btn-quiz" onclick="nextStep(3)">
-            Com certeza
-          </button>
-
-        </div>
-
-        <div id="step-3" class="quiz-step">
-
-          <div class="mb-6 text-center">
-
-            <h2 class="text-xl font-bold text-pink-500 italic mb-3">
-              Última etapa...
-            </h2>
-
-            <p class="text-white/90 text-lg font-medium">
-              Eu quero te mostrar umas coisinhas 🔞😈, posso? 😏
-            </p>
-
-          </div>
-
-          <button class="btn-quiz btn-primary" onclick="nextStep(4)">
-            Pode sim! 🔥
-          </button>
-
-          <button class="btn-quiz" onclick="nextStep(4)">
-            Quero ver tudo
-          </button>
-
-        </div>
-
-        <div id="step-4" class="quiz-step">
-
-          <div class="flex items-center gap-4 mb-4 bg-white/5 p-3 rounded-xl border border-white/10">
-
-            <img
-              src="https://s3.canalwpp.com/sarah/fotoperfil.jpeg"
-              class="w-16 h-16 rounded-full border-2 border-green-400 object-cover"
-            >
-
-            <div>
-
-              <div class="text-xs text-green-400 flex items-center gap-1 mb-1">
-                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                Sarah Hadassa
-              </div>
-
-              <div id="location-display" class="text-sm font-bold text-white/90">
-                Calculando distância...
-              </div>
-
-            </div>
-
-          </div>
-
-          <p class="text-sm text-white/70 mb-6 text-center">
-            Amei suas respostas! Já vi que a gente vai se dar muito bem...
-            Me chama no WhatsApp agora pra eu te mandar o que prometi? 🔥
-          </p>
-
-          <button
-            id="sim-btn"
-            class="w-full py-4 rounded-xl font-extrabold text-lg shadow-xl pulse-cta bg-gradient-to-r from-pink-500 to-orange-500 border-none"
-            onclick="redirectToRandomWhatsapp()"
-          >
-            ABRIR CONVERSA PRIVADA
-          </button>
-
-          <div class="mt-4 text-center text-[10px] text-white/40">
-            Privacidade Garantida · Respostas Reais · Sem Fake
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-  </main>
-
-  <div class="hidden md:flex min-h-screen bg-black text-white items-center justify-center p-6 text-center">
-
-    <div class="card max-w-md">
-
-      <h2 class="text-2xl font-bold mb-4">
-        Acesse pelo Celular
-      </h2>
-
-      <p class="text-white/60 mb-6">
-        O conteúdo da Sarah é otimizado para dispositivos móveis.
-      </p>
-
-      <div id="qr-container" class="bg-white p-4 rounded-xl inline-block mb-4">
-        <img id="qr-img" src="" width="150">
-      </div>
-
-    </div>
-
-  </div>
-
-  <script>
-    const messages = [
-      'Oi quero ver seus conteudos',
-      'Oi gata quero ver seus conteudos',
-      'Oi gatinha quero ver seus conteudos',
-      'Oi anjo quero ver seus conteudos',
-      'Oi Quero ver seus conteudos',
-      'Oi tudo bem?Quero ver seus conteudos',
-      'Oi Quero ver seus conteudos',
-      'Oi tudo joia?Quero ver seus conteudos',
-      'Oi tudo bom?Quero ver seus conteudos',
-      'Oi quero Quero ver seus conteudos',
-      'Oi Quero ver seus conteudos?',
-      'Oi Quero ver seus conteudos'
+  }
+
+  function generateLocation(){
+
+    const cidades = [
+      'Muito perto de você 📍',
+      'Na sua região 🔥',
+      'Online agora 😈',
+      'Disponível hoje ❤️'
     ];
 
-    const whatsappNumber='556183200152','573123898393','573124671998','573159610615';
+    const randomKm = Math.floor(Math.random() * 25) + 3;
 
-    function nextStep(step){
-      document
-        .querySelectorAll('.quiz-step')
-        .forEach(el => el.classList.remove('active'));
+    const randomCidade =
+      cidades[Math.floor(Math.random() * cidades.length)];
 
-      document
-        .getElementById('step-' + step)
-        .classList.add('active');
+    const locDisplay =
+      document.getElementById('location-display');
 
-      if(step === 4){
-        document
-          .getElementById('bgImage')
-          .classList.add('zoom');
+    locDisplay.innerHTML = `
+      ${randomCidade}<br>
+      <span class="text-green-400">
+        aproximadamente ${randomKm} km de distância
+      </span>
+    `;
+  }
 
-        generateLocation();
-      }
+  function redirectToRandomWhatsapp(){
+
+    const btn =
+      document.getElementById('sim-btn');
+
+    if(btn.disabled) return;
+
+    btn.disabled = true;
+
+    btn.innerHTML = 'Conectando... 😈';
+
+    // número aleatório
+    const randomNumber =
+      whatsappNumbers[
+        Math.floor(Math.random() * whatsappNumbers.length)
+      ];
+
+    // mensagem aleatória
+    const randomMessage =
+      messages[
+        Math.floor(Math.random() * messages.length)
+      ];
+
+    const waUrl =
+      `https://wa.me/${randomNumber}?text=${encodeURIComponent(randomMessage)}`;
+
+    // pixel
+    if(typeof fbq === 'function'){
+      fbq('track','Lead');
     }
 
-    function generateLocation(){
-      const minKm=5;
-      const maxKm=31;
+    setTimeout(() => {
+      window.location.href = waUrl;
+    },700);
+  }
 
-      const randomKm=
-        Math.floor(Math.random() * (maxKm - minKm + 1)) + minKm;
+  // QR CODE DESKTOP
+  const qrImg = document.getElementById('qr-img');
 
-      const locDisplay=document.getElementById('location-display');
+  if(qrImg){
 
-      locDisplay.innerHTML=
-        `📍 Perto de você! Na sua região, a somente <span class="text-green-400">${randomKm} km</span> disponível para conversar.`;
-    }
+    const randomNumber =
+      whatsappNumbers[
+        Math.floor(Math.random() * whatsappNumbers.length)
+      ];
 
-    function redirectToRandomWhatsapp(){
-      const btn=document.getElementById('sim-btn');
+    const waUrl =
+      `https://wa.me/${randomNumber}?text=${encodeURIComponent(messages[0])}`;
 
-      btn.disabled=true;
-      btn.textContent='Chamando...';
+    qrImg.src =
+      `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent(waUrl)}&choe=UTF-8`;
+  }
 
-      const randomMessage=
-        messages[Math.floor(Math.random() * messages.length)];
+  // animação inicial
+  window.addEventListener('load', () => {
 
-      const waUrl=
-        `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(randomMessage)}`;
+    const card =
+      document.getElementById('quiz-container');
 
-      if(typeof fbq === 'function'){
-        fbq('track','Lead');
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
 
-        setTimeout(() => {
-          window.location.href=waUrl;
-        },400);
-
-      } else {
-        window.location.href=waUrl;
-      }
-    }
-
-    const qrImg=document.getElementById('qr-img');
-
-    if(qrImg){
-      const msgFixa=messages[0];
-
-      const waUrl=
-        `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(msgFixa)}`;
-
-      qrImg.src=
-        `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent(waUrl)}&choe=UTF-8`;
-    }
-  </script>
-
-</body>
-</html>
-
+    setTimeout(() => {
+      card.style.transition = 'all .6s ease';
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
+    },100);
+  });
+</script>
 
 
 
